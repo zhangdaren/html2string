@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<meta name="author" content="zhangdaren">
+		<meta name="keywords" content="html,js,string,代码转换,代码辅助,前端">
+		<title>HTML to JS</title>
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<style>
+			html,
+			body {
+				margin: 0;
+				padding: 0;
+				width: 100%;
+			}
+			
+			body {
+				font-family: "Arial", "Microsoft YaHei", "黑体", "宋体", sans-serif;
+				background: #F6F6F6;
+			}
+			
+			.whole {
+				width: 100%;
+				margin: 0 auto;
+				max-width: 900px;
+			}
+			
+			textarea {
+				height: 320px;
+				width: -webkit-calc(100% - 20px);
+				width: -moz-calc(100% - 20px);
+				width: calc(100% - 20px);
+				line-height: 1.5;
+				padding: 10px;
+				border-color: #CCC;
+				font-family: -webkit-body;
+			}
+			.copyRight
+			{
+				color: #999;
+				text-align: right;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="whole">
+			<h3>html代码自动添加引号工具 <span>20170323</span></h3>
+			<div class="">
+				<div class="" style="margin-bottom: 10px;">
+					<span>输入：</span>
+					<button type="button" id="clearBtn">清除</button>
+				</div>
+				<textarea name="" id="inputArea" rows="" cols=""></textarea>
+			</div>
+			<div class="" style="margin-top: 10px;">
+				<div class="" style="margin-bottom: 10px;">
+					<span>输出(自动转换)：</span>
+					<button type="button" id="changeBtn" disabled="">转换</button>
+				</div>
+				<textarea name="" id="outputArea" rows="" cols=""></textarea>
+			</div>
+			<div class="copyRight">code by zhangdaren</div>
+		</div>
+
+		<script>
+			$(function() {
+
+				function trim(str) { //删除左右两端的空格
+					　　
+					return str.replace(/(^\s*)|(\s*$)/g, "");　　
+				}　　
+				function ltrim(str) { //删除左边的空格
+					　　
+					return str.replace(/(^\s*)/g, "");　　
+				}　　
+				function rtrim(str) { //删除右边的空格
+					　　
+					return str.replace(/(\s*$)/g, "");　　
+				}
+
+				$("#inputArea").on("input propertychange", function() {
+					convert();
+				});
+				$("#changeBtn").click(function() {
+					convert();
+				});
+				$("#clearBtn").click(function() {
+					$("#inputArea").val("");
+				});
+
+				function convert() {
+					var source = rtrim($("#inputArea").val());
+
+					var lineArr = source.split("\n");
+					var result = "";
+					for(var i = 0; i < lineArr.length; i++) {
+						var str = lineArr[i];
+						result += "'" + str + "'+" + "\n";
+					}
+					console.log(result.Length);
+					var len = source.length + lineArr.length * 3;
+					//删除末尾字符并加上分号
+					result = result.substring(0, len - 1) + ";"
+					console.log(result);
+					$("#outputArea").val(result);
+				}
+
+				//初始化
+				var initStr = '输入html代码，自动给代码加上单引号和+号，方便在js里调用。\n' +
+					'以下演示代码：\n' +
+					'\n' +
+					'<div class="" style="margin-bottom: 10px;">\n' +
+					'	<span>输入：</span>\n' +
+					'	<button type="button" id="clearBtn">清除</button>\n' +
+					'</div>';
+				$("#inputArea").val(initStr);
+				convert();
+			});
+		</script>
+	</body>
+</html>
