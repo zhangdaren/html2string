@@ -5,8 +5,9 @@
 		<meta charset="utf-8" />
 		<meta name="author" content="zhangdaren">
 		<meta name="keywords" content="html,js,string,代码转换,代码辅助,前端">
+		<link rel="stylesheet" href="codemirror/lib/codemirror.css">
 		<title>HTML to JS</title>
-		<script type="text/javascript" src="js/jquery.min.js"></script>
+
 		<style>
 			html,
 			body {
@@ -36,10 +37,19 @@
 				border-color: #CCC;
 				font-family: -webkit-body;
 			}
-			.copyRight
+			.subTitle
 			{
+				    font-size: 14px;
+			}
+			.copyRight {
 				color: #999;
-				text-align: right;
+				text-align: right;	
+				margin-top: 10px;
+				margin-bottom: 20px;
+			}
+			
+			.CodeMirror {
+				line-height: 1.5;
 			}
 		</style>
 	</head>
@@ -49,23 +59,41 @@
 			<h3>html代码自动添加引号工具 <span>20170323</span></h3>
 			<div class="">
 				<div class="" style="margin-bottom: 10px;">
-					<span>输入：</span>
+					<span class="subTitle">输入：</span>
 					<button type="button" id="clearBtn">清除</button>
 				</div>
 				<textarea name="" id="inputArea" rows="" cols=""></textarea>
 			</div>
 			<div class="" style="margin-top: 10px;">
 				<div class="" style="margin-bottom: 10px;">
-					<span>输出(自动转换)：</span>
+					<span class="subTitle">输出(自动转换)：</span>
 					<button type="button" id="changeBtn" disabled="">转换</button>
 				</div>
 				<textarea name="" id="outputArea" rows="" cols=""></textarea>
 			</div>
 			<div class="copyRight">code by zhangdaren</div>
 		</div>
+		<script type="text/javascript" src="js/jquery-2.1.4.min.js"></script>
+		<script src="codemirror/lib/codemirror.js"></script>
+		<script src="codemirror/mode/xml/xml.js"></script>
 
+		<script type="text/javascript" src="js/beautify-html.js"></script>
 		<script>
 			$(function() {
+				var $inputArea = $("#inputArea");
+				var $outputArea = $("#outputArea");
+				
+				//参考：https://www.awaimai.com/2050.html
+				//代码编辑框初始化
+				var codeMirrorEditor_input = CodeMirror.fromTextArea($inputArea[0], {
+					mode: "text/html", // 模式
+					lineNumbers: true //显示行号
+				});
+
+				var codeMirrorEditor_output = CodeMirror.fromTextArea($outputArea[0], {
+					mode: 'text/html', //编辑器语言
+					lineNumbers: true //显示行号
+				});
 
 				function trim(str) { //删除左右两端的空格
 					　　
@@ -79,35 +107,47 @@
 					　　
 					return str.replace(/(\s*$)/g, "");　　
 				}
-
-				$("#inputArea").on("input propertychange", function() {
+				//监听输入事件
+				$inputArea.on("input propertychange", function() {
 					convert();
 				});
+				//转换
 				$("#changeBtn").click(function() {
 					convert();
 				});
+
+				//清除
 				$("#clearBtn").click(function() {
-					$("#inputArea").val("");
+					$inputArea.val("");
 				});
-
+				//转换
 				function convert() {
-					var source = rtrim($("#inputArea").val());
 
-					var lineArr = source.split("\n");
+					var html_source = rtrim(codeMirrorEditor_input.getValue());
+					//预先格式化
+					html_source = style_html(html_source, {
+						'indent_size': 4, //缩进字符量
+						'indent_char': ' ', //缩进字符
+						'max_char': 78,
+						'brace_style': 'expand',
+						'unformatted': ['a', 'sub', 'sup', 'b', 'i', 'u']
+					});
+
+					var lineArr = html_source.split("\n");
 					var result = "";
 					for(var i = 0; i < lineArr.length; i++) {
 						var str = lineArr[i];
 						result += "'" + str + "'+" + "\n";
 					}
 					console.log(result.Length);
-					var len = source.length + lineArr.length * 3;
+					var len = html_source.length + lineArr.length * 3;
 					//删除末尾字符并加上分号
 					result = result.substring(0, len - 1) + ";"
 					console.log(result);
-					$("#outputArea").val(result);
+					codeMirrorEditor_output.setValue(result);
 				}
 
-				//初始化
+				//初始化--示例
 				var initStr = '输入html代码，自动给代码加上单引号和+号，方便在js里调用。\n' +
 					'以下演示代码：\n' +
 					'\n' +
@@ -115,9 +155,11 @@
 					'	<span>输入：</span>\n' +
 					'	<button type="button" id="clearBtn">清除</button>\n' +
 					'</div>';
-				$("#inputArea").val(initStr);
+				codeMirrorEditor_input.setValue(initStr);
+				//转换
 				convert();
 			});
 		</script>
 	</body>
+
 </html>
