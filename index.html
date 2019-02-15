@@ -37,13 +37,14 @@
 				border-color: #CCC;
 				font-family: -webkit-body;
 			}
-			.subTitle
-			{
-				    font-size: 14px;
+			
+			.subTitle {
+				font-size: 14px;
 			}
+			
 			.copyRight {
 				color: #999;
-				text-align: right;	
+				text-align: right;
 				margin-top: 10px;
 				margin-bottom: 20px;
 			}
@@ -67,7 +68,7 @@
 			<div class="" style="margin-top: 10px;">
 				<div class="" style="margin-bottom: 10px;">
 					<span class="subTitle">输出(自动转换)：</span>
-					<button type="button" id="changeBtn" disabled="">转换</button>
+					<button type="button" id="changeBtn">转换</button>
 				</div>
 				<textarea name="" id="outputArea" rows="" cols=""></textarea>
 			</div>
@@ -82,12 +83,17 @@
 			$(function() {
 				var $inputArea = $("#inputArea");
 				var $outputArea = $("#outputArea");
-				
+
 				//参考：https://www.awaimai.com/2050.html
 				//代码编辑框初始化
 				var codeMirrorEditor_input = CodeMirror.fromTextArea($inputArea[0], {
 					mode: "text/html", // 模式
 					lineNumbers: true //显示行号
+				});
+
+				//输入完成
+				codeMirrorEditor_input.on("change", function() {
+					convert();
 				});
 
 				var codeMirrorEditor_output = CodeMirror.fromTextArea($outputArea[0], {
@@ -108,9 +114,9 @@
 					return str.replace(/(\s*$)/g, "");　　
 				}
 				//监听输入事件
-				$inputArea.on("input propertychange", function() {
-					convert();
-				});
+				//				$inputArea.on("input propertychange", function() {
+				//					convert();
+				//				});
 				//转换
 				$("#changeBtn").click(function() {
 					convert();
@@ -143,7 +149,7 @@
 					var len = html_source.length + lineArr.length * 3;
 					//删除末尾字符并加上分号
 					result = result.substring(0, len - 1) + ";"
-					console.log(result);
+					//					console.log(result);
 					codeMirrorEditor_output.setValue(result);
 				}
 
